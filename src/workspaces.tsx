@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Action, Icon, List, Spinner } from "@raycast/api";
+import { Action, Icon, List } from "@raycast/api";
 import { listWorkspaces, run, Workspace } from "./lib/omniwm";
 
 export default function Workspaces() {
@@ -17,8 +17,7 @@ export default function Workspaces() {
   if (loading) {
     return (
       <List>
-        <List.Item icon={Icon.Window} />
-        <Spinner />
+        <List.Item icon={Icon.Window} title="Loading workspaces…" />
       </List>
     );
   }
@@ -32,13 +31,13 @@ export default function Workspaces() {
   }
 
   return (
-    <List searchActionPlacement="always">
+    <List>
       {workspaces.map((w) => (
         <List.Item
           key={w.number}
-          icon={w.isFocused ? Icon.CheckMarkCircleFill : Icon.Window}
-          title={`${w.number} · ${w.displayName}`}
-          subtitle={`${w.counts?.total ?? 0} window(s)${w.isFocused ? "  ·  focused" : ""}`}
+          icon={Icon.Window}
+          title={`${w.number} · ${w.displayName}${w.isFocused ? "  ✓ focused" : ""}`}
+          subtitle={`${w.counts?.total ?? 0} window(s)`}
           actions={
             <>
               <Action title="Switch to This Workspace" onAction={() => run("command", "switch-workspace", String(w.number))} />

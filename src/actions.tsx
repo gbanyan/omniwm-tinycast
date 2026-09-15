@@ -1,7 +1,7 @@
-import { Action, Actions } from "@raycast/api";
+import { Action, ActionPanel } from "@raycast/api";
 import { run } from "./lib/omniwm";
 
-type Item = { title: string; description?: string; args: string[] };
+type Item = { title: string; args: string[] };
 type Group = { name: string; items: Item[] };
 
 /**
@@ -24,7 +24,7 @@ const GROUPS: Group[] = [
   {
     name: "Move & Resize",
     items: [
-      { title: "Swap Split", description: "Swap the two panes of the focused container", args: ["command", "swap-split"] },
+      { title: "Swap Split (swap the two panes)", args: ["command", "swap-split"] },
       { title: "Toggle Split", args: ["command", "toggle-split"] },
       { title: "Move Window Down", args: ["command", "move-window-down"] },
       { title: "Move Window Up", args: ["command", "move-window-up"] },
@@ -114,14 +114,14 @@ const GROUPS: Group[] = [
 
 export default function Command() {
   return (
-    <Actions>
+    <ActionPanel>
       {GROUPS.map((group) => (
-        <Actions.Section title={group.name} key={group.name}>
+        <ActionPanel.Section title={group.name} key={group.name}>
           {group.items.map((item) => (
-            <Action key={item.title} title={item.title} subtitle={item.description} onAction={() => run(...item.args)} />
+            <Action key={item.title} title={item.title} onAction={() => run(...item.args)} />
           ))}
-        </Actions.Section>
+        </ActionPanel.Section>
       ))}
-    </Actions>
+    </ActionPanel>
   );
 }

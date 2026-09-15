@@ -1,4 +1,5 @@
-import { execFile, promisify } from "child_process";
+import { execFile } from "child_process";
+import { promisify } from "util";
 import { preferences, showToast, Toast } from "@raycast/api";
 
 const FALLBACK = "/opt/homebrew/bin/omniwmctl";
@@ -6,10 +7,16 @@ const execFileAsync = promisify(execFile);
 
 const toNumber = (v: unknown): number | undefined => (typeof v === "number" && Number.isFinite(v) ? v : undefined);
 
+// The generated preference type is unreliable in this @raycast/api build, so read the
+// value through a narrow cast; the runtime `preferences` object is keyed by the manifest id.
+const binPath = (): string => {
+  const pref = (preferences as unknown as { omniwmctlPath?: string }).omniwmctlPath;
+  return (typeof pref === "string" && pref.trim()) || FALLBACK;
+};
+
 /** Fire an omniwmctl command (fire-and-forget). Failures surface as a toast so a bad subcommand/arg is visible. */
 export function run(...args: string[]): void {
-  const bin = preferences.omniwmctlPath?.trim() || FALLBACK;
-  execFile(bin, args, (err) => {
+  execFile(binPath(), args, (err) => {
     if (!err) return;
     showToast({ style: Toast.Style.Failure, title: `omniwmctl ${args.join(" ")}`, message: String(err.message || err) });
   });
@@ -24,8 +31,9 @@ export interface Workspace {
 
 /** List workspaces (number, display name, focus, window counts) via `omniwmctl query workspaces`. */
 export async function listWorkspaces(): Promise<Workspace[]> {
-  const bin = preferences.omniwmctlPath?.trim() || FALLBACK;
-  const { stdout } = await execFileAsync(bin, ["query", "workspaces", "--format", "json"], { maxBuffer: 16 * 1024 * 1024 });
+  const { stdout } = await execFileAsync(binPath(), ["query", "workspaces", "--format", "json"], {
+    maxBuffer: 16 * 1024 * 1024,
+  });
   const data: unknown = JSON.parse(stdout);
 
   const payload =
