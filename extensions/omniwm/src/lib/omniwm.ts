@@ -7,10 +7,10 @@ const execFileAsync = promisify(execFile);
 
 const toNumber = (v: unknown): number | undefined => (typeof v === "number" && Number.isFinite(v) ? v : undefined);
 
-// The generated preference type is unreliable in this @raycast/api build, so read the
-// value through a narrow cast; the runtime `preferences` object is keyed by the manifest id.
+// `preferences` is undefined in some host runtimes (e.g. Tinycast's @raycast/api shim), so
+// guard the access and fall back to the known omniwmctl path when it isn't populated.
 const binPath = (): string => {
-  const pref = (preferences as unknown as { omniwmctlPath?: string }).omniwmctlPath;
+  const pref = (preferences as unknown as { omniwmctlPath?: string } | undefined)?.omniwmctlPath;
   return (typeof pref === "string" && pref.trim()) || FALLBACK;
 };
 
