@@ -1,1 +1,967 @@
-{"$schema":"https://www.raycast.com/schemas/extension.json","author":"gbanyan","categories":["Productivity","System Tools"],"commands":[{"interpreter":"node","keywords":["focus","move","resize","swap","split","window","monitor","scratchpad","fullscreen","floating","layout","overview","workspace-bar","quake","span"],"name":"actions","script":"src/actions.tsx","subtitle":"Focus, move, resize, windows, monitors, scratchpads","title":"Actions","type":"script"},{"interpreter":"node","keywords":["workspace","switch","move-to","workspace-number"],"name":"workspaces","script":"src/workspaces.tsx","subtitle":"Switch to, or move the focused window to, a workspace","title":"Workspaces","type":"script"}],"dependencies":{"@raycast/api":"^1.83.0"},"description":"Control OmniWM from the launcher: focus, move, resize, workspaces, monitors and scratchpads via omniwmctl.","devDependencies":{"@types/react":"19.0.10","react":"19.0.0","typescript":"^5.3.0"},"keywords":["omniwm","window","tile","resize","swap","focus","workspace","monitor","split"],"name":"omniwm","preferences":[{"default":"/opt/homebrew/bin/omniwmctl","description":"Absolute path to the omniwmctl binary.","id":"omniwmctlPath","label":"omniwmctl path","type":"textfield"}],"scripts":{"build":"ray build","dev":"ray dev"},"tags":["window","window-manager","tiling","productivity","system-tools"],"title":"OmniWM"}
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "author": "gbanyan",
+  "categories": [
+    "Productivity",
+    "System Tools"
+  ],
+  "commands": [
+    {
+      "name": "actions",
+      "title": "Actions",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/actions.tsx",
+      "description": "Browse OmniWM actions (read-only in Tinycast)",
+      "keywords": [
+        "omniwm",
+        "actions",
+        "browse"
+      ]
+    },
+    {
+      "name": "workspaces",
+      "title": "Workspaces",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/workspaces.tsx",
+      "description": "Current OmniWM workspaces (read-only in Tinycast)",
+      "keywords": [
+        "omniwm",
+        "workspace",
+        "workspaces"
+      ]
+    },
+    {
+      "name": "focus-left",
+      "title": "Focus Left",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/focus-left.tsx",
+      "description": "OmniWM: Focus Left",
+      "keywords": [
+        "omniwm",
+        "focus",
+        "left",
+        "window"
+      ]
+    },
+    {
+      "name": "focus-right",
+      "title": "Focus Right",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/focus-right.tsx",
+      "description": "OmniWM: Focus Right",
+      "keywords": [
+        "omniwm",
+        "focus",
+        "right",
+        "window"
+      ]
+    },
+    {
+      "name": "focus-up",
+      "title": "Focus Up",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/focus-up.tsx",
+      "description": "OmniWM: Focus Up",
+      "keywords": [
+        "omniwm",
+        "focus",
+        "up",
+        "window"
+      ]
+    },
+    {
+      "name": "focus-down",
+      "title": "Focus Down",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/focus-down.tsx",
+      "description": "OmniWM: Focus Down",
+      "keywords": [
+        "omniwm",
+        "focus",
+        "down",
+        "window"
+      ]
+    },
+    {
+      "name": "focus-previous",
+      "title": "Focus Previous",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/focus-previous.tsx",
+      "description": "OmniWM: Focus Previous",
+      "keywords": [
+        "omniwm",
+        "focus",
+        "previous",
+        "window"
+      ]
+    },
+    {
+      "name": "focus-column-first",
+      "title": "Focus Column First",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/focus-column-first.tsx",
+      "description": "OmniWM: Focus Column First",
+      "keywords": [
+        "omniwm",
+        "focus",
+        "column",
+        "first"
+      ]
+    },
+    {
+      "name": "focus-column-last",
+      "title": "Focus Column Last",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/focus-column-last.tsx",
+      "description": "OmniWM: Focus Column Last",
+      "keywords": [
+        "omniwm",
+        "focus",
+        "column",
+        "last"
+      ]
+    },
+    {
+      "name": "swap-split",
+      "title": "Swap Split",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/swap-split.tsx",
+      "description": "OmniWM: Swap Split",
+      "keywords": [
+        "omniwm",
+        "swap",
+        "split",
+        "panes"
+      ]
+    },
+    {
+      "name": "toggle-split",
+      "title": "Toggle Split",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/toggle-split.tsx",
+      "description": "OmniWM: Toggle Split",
+      "keywords": [
+        "omniwm",
+        "split"
+      ]
+    },
+    {
+      "name": "move-window-down",
+      "title": "Move Window Down",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/move-window-down.tsx",
+      "description": "OmniWM: Move Window Down",
+      "keywords": [
+        "omniwm",
+        "move",
+        "window",
+        "down"
+      ]
+    },
+    {
+      "name": "move-window-up",
+      "title": "Move Window Up",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/move-window-up.tsx",
+      "description": "OmniWM: Move Window Up",
+      "keywords": [
+        "omniwm",
+        "move",
+        "window",
+        "up"
+      ]
+    },
+    {
+      "name": "move-down-or-workspace",
+      "title": "Move Down or to Workspace Down",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/move-down-or-workspace.tsx",
+      "description": "OmniWM: Move Down or to Workspace Down",
+      "keywords": [
+        "omniwm",
+        "move",
+        "down",
+        "workspace"
+      ]
+    },
+    {
+      "name": "move-up-or-workspace",
+      "title": "Move Up or to Workspace Up",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/move-up-or-workspace.tsx",
+      "description": "OmniWM: Move Up or to Workspace Up",
+      "keywords": [
+        "omniwm",
+        "move",
+        "up",
+        "workspace"
+      ]
+    },
+    {
+      "name": "resize-focused-grow",
+      "title": "Resize Grow",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/resize-focused-grow.tsx",
+      "description": "OmniWM: Resize Grow",
+      "keywords": [
+        "omniwm",
+        "resize",
+        "grow"
+      ]
+    },
+    {
+      "name": "resize-focused-shrink",
+      "title": "Resize Shrink",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/resize-focused-shrink.tsx",
+      "description": "OmniWM: Resize Shrink",
+      "keywords": [
+        "omniwm",
+        "resize",
+        "shrink"
+      ]
+    },
+    {
+      "name": "resize-h-grow",
+      "title": "Resize Horizontal Grow",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/resize-h-grow.tsx",
+      "description": "OmniWM: Resize Horizontal Grow",
+      "keywords": [
+        "omniwm",
+        "resize",
+        "grow",
+        "horizontal"
+      ]
+    },
+    {
+      "name": "resize-h-shrink",
+      "title": "Resize Horizontal Shrink",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/resize-h-shrink.tsx",
+      "description": "OmniWM: Resize Horizontal Shrink",
+      "keywords": [
+        "omniwm",
+        "resize",
+        "shrink",
+        "horizontal"
+      ]
+    },
+    {
+      "name": "resize-v-grow",
+      "title": "Resize Vertical Grow",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/resize-v-grow.tsx",
+      "description": "OmniWM: Resize Vertical Grow",
+      "keywords": [
+        "omniwm",
+        "resize",
+        "grow",
+        "vertical"
+      ]
+    },
+    {
+      "name": "resize-v-shrink",
+      "title": "Resize Vertical Shrink",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/resize-v-shrink.tsx",
+      "description": "OmniWM: Resize Vertical Shrink",
+      "keywords": [
+        "omniwm",
+        "resize",
+        "shrink",
+        "vertical"
+      ]
+    },
+    {
+      "name": "cycle-size-forward",
+      "title": "Cycle Size Forward",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/cycle-size-forward.tsx",
+      "description": "OmniWM: Cycle Size Forward",
+      "keywords": [
+        "omniwm",
+        "cycle",
+        "size"
+      ]
+    },
+    {
+      "name": "cycle-size-backward",
+      "title": "Cycle Size Backward",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/cycle-size-backward.tsx",
+      "description": "OmniWM: Cycle Size Backward",
+      "keywords": [
+        "omniwm",
+        "cycle",
+        "size"
+      ]
+    },
+    {
+      "name": "balance-sizes",
+      "title": "Balance Sizes",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/balance-sizes.tsx",
+      "description": "OmniWM: Balance Sizes",
+      "keywords": [
+        "omniwm",
+        "balance",
+        "size"
+      ]
+    },
+    {
+      "name": "consume-window-left",
+      "title": "Consume Window Left",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/consume-window-left.tsx",
+      "description": "OmniWM: Consume Window Left",
+      "keywords": [
+        "omniwm",
+        "consume",
+        "left",
+        "window"
+      ]
+    },
+    {
+      "name": "consume-window-right",
+      "title": "Consume Window Right",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/consume-window-right.tsx",
+      "description": "OmniWM: Consume Window Right",
+      "keywords": [
+        "omniwm",
+        "consume",
+        "right",
+        "window"
+      ]
+    },
+    {
+      "name": "expel-window-column",
+      "title": "Expel Window From Column",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/expel-window-column.tsx",
+      "description": "OmniWM: Expel Window From Column",
+      "keywords": [
+        "omniwm",
+        "expel",
+        "column"
+      ]
+    },
+    {
+      "name": "toggle-column-tabbed",
+      "title": "Toggle Column Tabbed",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/toggle-column-tabbed.tsx",
+      "description": "OmniWM: Toggle Column Tabbed",
+      "keywords": [
+        "omniwm",
+        "column",
+        "tabbed"
+      ]
+    },
+    {
+      "name": "cycle-primary-span-fwd",
+      "title": "Cycle Primary Span Forward",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/cycle-primary-span-fwd.tsx",
+      "description": "OmniWM: Cycle Primary Span Forward",
+      "keywords": [
+        "omniwm",
+        "span",
+        "primary"
+      ]
+    },
+    {
+      "name": "cycle-primary-span-bwd",
+      "title": "Cycle Primary Span Backward",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/cycle-primary-span-bwd.tsx",
+      "description": "OmniWM: Cycle Primary Span Backward",
+      "keywords": [
+        "omniwm",
+        "span",
+        "primary"
+      ]
+    },
+    {
+      "name": "cycle-secondary-span-fwd",
+      "title": "Cycle Secondary Span Forward",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/cycle-secondary-span-fwd.tsx",
+      "description": "OmniWM: Cycle Secondary Span Forward",
+      "keywords": [
+        "omniwm",
+        "span",
+        "secondary"
+      ]
+    },
+    {
+      "name": "cycle-secondary-span-bwd",
+      "title": "Cycle Secondary Span Backward",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/cycle-secondary-span-bwd.tsx",
+      "description": "OmniWM: Cycle Secondary Span Backward",
+      "keywords": [
+        "omniwm",
+        "span",
+        "secondary"
+      ]
+    },
+    {
+      "name": "reset-secondary-span",
+      "title": "Reset Secondary Span",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/reset-secondary-span.tsx",
+      "description": "OmniWM: Reset Secondary Span",
+      "keywords": [
+        "omniwm",
+        "span",
+        "reset"
+      ]
+    },
+    {
+      "name": "expand-to-available-span",
+      "title": "Expand To Available Span",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/expand-to-available-span.tsx",
+      "description": "OmniWM: Expand To Available Span",
+      "keywords": [
+        "omniwm",
+        "span",
+        "expand"
+      ]
+    },
+    {
+      "name": "toggle-fullscreen",
+      "title": "Toggle Fullscreen",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/toggle-fullscreen.tsx",
+      "description": "OmniWM: Toggle Fullscreen",
+      "keywords": [
+        "omniwm",
+        "fullscreen"
+      ]
+    },
+    {
+      "name": "toggle-native-fullscreen",
+      "title": "Toggle Native Fullscreen",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/toggle-native-fullscreen.tsx",
+      "description": "OmniWM: Toggle Native Fullscreen",
+      "keywords": [
+        "omniwm",
+        "fullscreen",
+        "native"
+      ]
+    },
+    {
+      "name": "toggle-floating",
+      "title": "Toggle Floating",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/toggle-floating.tsx",
+      "description": "OmniWM: Toggle Floating",
+      "keywords": [
+        "omniwm",
+        "floating",
+        "float"
+      ]
+    },
+    {
+      "name": "close-window",
+      "title": "Close Focused Window",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/close-window.tsx",
+      "description": "OmniWM: Close Focused Window",
+      "keywords": [
+        "omniwm",
+        "close",
+        "window"
+      ]
+    },
+    {
+      "name": "move-to-root",
+      "title": "Move To Root",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/move-to-root.tsx",
+      "description": "OmniWM: Move To Root",
+      "keywords": [
+        "omniwm",
+        "root"
+      ]
+    },
+    {
+      "name": "raise-floating",
+      "title": "Raise All Floating Windows",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/raise-floating.tsx",
+      "description": "OmniWM: Raise All Floating Windows",
+      "keywords": [
+        "omniwm",
+        "floating",
+        "raise"
+      ]
+    },
+    {
+      "name": "rescue-offscreen",
+      "title": "Rescue Offscreen Windows",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/rescue-offscreen.tsx",
+      "description": "OmniWM: Rescue Offscreen Windows",
+      "keywords": [
+        "omniwm",
+        "offscreen",
+        "rescue"
+      ]
+    },
+    {
+      "name": "monitor-left",
+      "title": "Move To Monitor Left",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/monitor-left.tsx",
+      "description": "OmniWM: Move To Monitor Left",
+      "keywords": [
+        "omniwm",
+        "monitor",
+        "left"
+      ]
+    },
+    {
+      "name": "monitor-right",
+      "title": "Move To Monitor Right",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/monitor-right.tsx",
+      "description": "OmniWM: Move To Monitor Right",
+      "keywords": [
+        "omniwm",
+        "monitor",
+        "right"
+      ]
+    },
+    {
+      "name": "monitor-up",
+      "title": "Move To Monitor Up",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/monitor-up.tsx",
+      "description": "OmniWM: Move To Monitor Up",
+      "keywords": [
+        "omniwm",
+        "monitor",
+        "up"
+      ]
+    },
+    {
+      "name": "monitor-down",
+      "title": "Move To Monitor Down",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/monitor-down.tsx",
+      "description": "OmniWM: Move To Monitor Down",
+      "keywords": [
+        "omniwm",
+        "monitor",
+        "down"
+      ]
+    },
+    {
+      "name": "focus-monitor-next",
+      "title": "Focus Monitor Next",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/focus-monitor-next.tsx",
+      "description": "OmniWM: Focus Monitor Next",
+      "keywords": [
+        "omniwm",
+        "monitor",
+        "next"
+      ]
+    },
+    {
+      "name": "focus-monitor-prev",
+      "title": "Focus Monitor Previous",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/focus-monitor-prev.tsx",
+      "description": "OmniWM: Focus Monitor Previous",
+      "keywords": [
+        "omniwm",
+        "monitor",
+        "prev"
+      ]
+    },
+    {
+      "name": "focus-monitor-last",
+      "title": "Focus Monitor Last",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/focus-monitor-last.tsx",
+      "description": "OmniWM: Focus Monitor Last",
+      "keywords": [
+        "omniwm",
+        "monitor",
+        "last"
+      ]
+    },
+    {
+      "name": "workspace-next",
+      "title": "Next Workspace",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/workspace-next.tsx",
+      "description": "OmniWM: Next Workspace",
+      "keywords": [
+        "omniwm",
+        "workspace",
+        "next"
+      ]
+    },
+    {
+      "name": "workspace-prev",
+      "title": "Previous Workspace",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/workspace-prev.tsx",
+      "description": "OmniWM: Previous Workspace",
+      "keywords": [
+        "omniwm",
+        "workspace",
+        "prev"
+      ]
+    },
+    {
+      "name": "workspace-back-forth",
+      "title": "Workspace Back and Forth",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/workspace-back-forth.tsx",
+      "description": "OmniWM: Workspace Back and Forth",
+      "keywords": [
+        "omniwm",
+        "workspace",
+        "back",
+        "forth"
+      ]
+    },
+    {
+      "name": "toggle-overview",
+      "title": "Toggle Overview",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/toggle-overview.tsx",
+      "description": "OmniWM: Toggle Overview",
+      "keywords": [
+        "omniwm",
+        "overview"
+      ]
+    },
+    {
+      "name": "toggle-workspace-bar",
+      "title": "Toggle Workspace Bar",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/toggle-workspace-bar.tsx",
+      "description": "OmniWM: Toggle Workspace Bar",
+      "keywords": [
+        "omniwm",
+        "workspace",
+        "bar"
+      ]
+    },
+    {
+      "name": "toggle-quake",
+      "title": "Toggle Quake Terminal",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/toggle-quake.tsx",
+      "description": "OmniWM: Toggle Quake Terminal",
+      "keywords": [
+        "omniwm",
+        "quake",
+        "terminal"
+      ]
+    },
+    {
+      "name": "toggle-system-stats",
+      "title": "Toggle System Stats",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/toggle-system-stats.tsx",
+      "description": "OmniWM: Toggle System Stats",
+      "keywords": [
+        "omniwm",
+        "stats",
+        "system"
+      ]
+    },
+    {
+      "name": "toggle-workspace-layout",
+      "title": "Toggle Workspace Layout",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/toggle-workspace-layout.tsx",
+      "description": "OmniWM: Toggle Workspace Layout",
+      "keywords": [
+        "omniwm",
+        "layout",
+        "workspace"
+      ]
+    },
+    {
+      "name": "set-layout-default",
+      "title": "Set Layout: Default",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/set-layout-default.tsx",
+      "description": "OmniWM: Set Layout: Default",
+      "keywords": [
+        "omniwm",
+        "layout",
+        "default"
+      ]
+    },
+    {
+      "name": "set-layout-niri",
+      "title": "Set Layout: Niri",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/set-layout-niri.tsx",
+      "description": "OmniWM: Set Layout: Niri",
+      "keywords": [
+        "omniwm",
+        "layout",
+        "niri"
+      ]
+    },
+    {
+      "name": "set-layout-dwindle",
+      "title": "Set Layout: Dwindle",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/set-layout-dwindle.tsx",
+      "description": "OmniWM: Set Layout: Dwindle",
+      "keywords": [
+        "omniwm",
+        "layout",
+        "dwindle"
+      ]
+    },
+    {
+      "name": "scratchpad-toggle-1",
+      "title": "Toggle Scratchpad 1",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/scratchpad-toggle-1.tsx",
+      "description": "OmniWM: Toggle Scratchpad 1",
+      "keywords": [
+        "omniwm",
+        "scratchpad",
+        "1"
+      ]
+    },
+    {
+      "name": "scratchpad-assign-1",
+      "title": "Assign To Scratchpad 1",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/scratchpad-assign-1.tsx",
+      "description": "OmniWM: Assign To Scratchpad 1",
+      "keywords": [
+        "omniwm",
+        "scratchpad",
+        "assign"
+      ]
+    },
+    {
+      "name": "scratchpad-toggle-2",
+      "title": "Toggle Scratchpad 2",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/scratchpad-toggle-2.tsx",
+      "description": "OmniWM: Toggle Scratchpad 2",
+      "keywords": [
+        "omniwm",
+        "scratchpad",
+        "2"
+      ]
+    },
+    {
+      "name": "scratchpad-assign-2",
+      "title": "Assign To Scratchpad 2",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/scratchpad-assign-2.tsx",
+      "description": "OmniWM: Assign To Scratchpad 2",
+      "keywords": [
+        "omniwm",
+        "scratchpad",
+        "assign"
+      ]
+    },
+    {
+      "name": "switch-to-workspace-1",
+      "title": "Switch to Workspace 1",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/switch-to-workspace-1.tsx",
+      "description": "OmniWM: Switch to Workspace 1",
+      "keywords": [
+        "omniwm",
+        "workspace",
+        "1"
+      ]
+    },
+    {
+      "name": "switch-to-workspace-2",
+      "title": "Switch to Workspace 2",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/switch-to-workspace-2.tsx",
+      "description": "OmniWM: Switch to Workspace 2",
+      "keywords": [
+        "omniwm",
+        "workspace",
+        "2"
+      ]
+    },
+    {
+      "name": "switch-to-workspace-3",
+      "title": "Switch to Workspace 3",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/switch-to-workspace-3.tsx",
+      "description": "OmniWM: Switch to Workspace 3",
+      "keywords": [
+        "omniwm",
+        "workspace",
+        "3"
+      ]
+    },
+    {
+      "name": "switch-to-workspace-4",
+      "title": "Switch to Workspace 4",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/switch-to-workspace-4.tsx",
+      "description": "OmniWM: Switch to Workspace 4",
+      "keywords": [
+        "omniwm",
+        "workspace",
+        "4"
+      ]
+    },
+    {
+      "name": "switch-to-workspace-5",
+      "title": "Switch to Workspace 5",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/switch-to-workspace-5.tsx",
+      "description": "OmniWM: Switch to Workspace 5",
+      "keywords": [
+        "omniwm",
+        "workspace",
+        "5"
+      ]
+    },
+    {
+      "name": "switch-to-workspace-6",
+      "title": "Switch to Workspace 6",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/switch-to-workspace-6.tsx",
+      "description": "OmniWM: Switch to Workspace 6",
+      "keywords": [
+        "omniwm",
+        "workspace",
+        "6"
+      ]
+    },
+    {
+      "name": "switch-to-workspace-7",
+      "title": "Switch to Workspace 7",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/switch-to-workspace-7.tsx",
+      "description": "OmniWM: Switch to Workspace 7",
+      "keywords": [
+        "omniwm",
+        "workspace",
+        "7"
+      ]
+    },
+    {
+      "name": "switch-to-workspace-8",
+      "title": "Switch to Workspace 8",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/switch-to-workspace-8.tsx",
+      "description": "OmniWM: Switch to Workspace 8",
+      "keywords": [
+        "omniwm",
+        "workspace",
+        "8"
+      ]
+    },
+    {
+      "name": "switch-to-workspace-9",
+      "title": "Switch to Workspace 9",
+      "type": "script",
+      "interpreter": "node",
+      "script": "src/switch-to-workspace-9.tsx",
+      "description": "OmniWM: Switch to Workspace 9",
+      "keywords": [
+        "omniwm",
+        "workspace",
+        "9"
+      ]
+    }
+  ],
+  "dependencies": {
+    "@raycast/api": "^1.83.0"
+  },
+  "description": "Control OmniWM (windows, workspaces, monitors) from Raycast or Tinycast.",
+  "license": "MIT",
+  "name": "omniwm"
+}
