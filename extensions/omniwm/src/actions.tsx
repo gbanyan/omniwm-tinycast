@@ -1,4 +1,4 @@
-import { Action, ActionPanel } from "@raycast/api";
+import { Action, List } from "@raycast/api";
 import { run } from "./lib/omniwm";
 
 type Item = { title: string; args: string[] };
@@ -114,14 +114,19 @@ const GROUPS: Group[] = [
 
 export default function Command() {
   return (
-    <ActionPanel>
+    <List>
       {GROUPS.map((group) => (
-        <ActionPanel.Section title={group.name} key={group.name}>
+        <List.Section key={group.name} title={group.name}>
           {group.items.map((item) => (
-            <Action key={item.title} title={item.title} onAction={() => run(...item.args)} />
+            <List.Item
+              key={item.title}
+              title={item.title}
+              subtitle={item.args.slice(1).join(" ")}
+              actions={<Action title="Run" onAction={() => run(...item.args)} />}
+            />
           ))}
-        </ActionPanel.Section>
+        </List.Section>
       ))}
-    </ActionPanel>
+    </List>
   );
 }
