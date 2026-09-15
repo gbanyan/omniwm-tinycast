@@ -7,11 +7,11 @@ This repository is a **Raycast-extension registry**: one directory per extension
 like [`raycast/extensions`](https://github.com/raycast/extensions). tinycast reads a GitHub
 registry at the `extensions/` path, so the extension lives at `extensions/omniwm/`.
 
-- **`extensions/omniwm/`** — the OmniWM extension. Two palette commands:
-  - **OmniWM Actions** — the `omniwmctl command …` surface (focus, move/resize, span,
-    windows, monitors, workspaces, layout, scratchpads), filterable, Enter to run.
-  - **OmniWM Workspaces** — live workspace list (number, name, focus, window counts) with
-    *switch to* / *move focused window here*.
+- **`extensions/omniwm/`** — the OmniWM extension. Every `omniwmctl` action is its own
+  palette command (type to filter, select + Enter runs it), plus **OmniWM Workspaces** (live
+  workspace list) and **OmniWM Actions** (grouped browse menu). tinycast runs the per-action
+  commands on Enter; it does not fire a `List` item's `onAction`, so the browse lists are
+  read-only there. See `extensions/omniwm/README.md`.
 
 ## Install into tinycast
 
