@@ -1,6 +1,14 @@
 {
   "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "omniwm",
+  "title": "OmniWM",
+  "description": "Control OmniWM (windows, workspaces, monitors) from Raycast or Tinycast.",
+  "icon": "icon.svg",
   "author": "gbanyan",
+  "license": "MIT",
+  "platforms": [
+    "macOS"
+  ],
   "categories": [
     "Productivity",
     "System Tools"
@@ -10,19 +18,28 @@
       "name": "actions",
       "title": "Actions",
       "description": "Browse and run OmniWM actions (Enter runs; nested Windows/Marks/Forms)",
-      "mode": "view"
+      "mode": "view",
+      "keywords": [
+        "omniwm",
+        "actions",
+        "window",
+        "focus",
+        "move"
+      ]
     },
     {
       "name": "workspaces",
       "title": "Workspaces",
       "description": "Switch workspace or move the focused window (Enter / ⌘K)",
-      "mode": "view"
+      "mode": "view",
+      "keywords": [
+        "omniwm",
+        "workspace",
+        "workspaces"
+      ]
     }
   ],
   "dependencies": {
     "@raycast/api": "^1.83.0"
-  },
-  "description": "Control OmniWM (windows, workspaces, monitors) from Raycast or Tinycast.",
-  "license": "MIT",
-  "name": "omniwm"
+  }
 }

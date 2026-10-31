@@ -32,13 +32,14 @@ Requires **tinycast ≥ 0.11.3** (tested against **0.12.1**).
 
 ```sh
 npm install
-python3 generate-commands.py   # esbuild actions+workspaces → tinycast install dir
+python3 generate-commands.py   # esbuild → prebuilt *.js + local tinycast install dir
 # or: npm run build            # `ray build` for Raycast
 ```
 
 `generate-commands.py` writes a 2-command `package.json`, bundles
 `src/actions.tsx` and `src/workspaces.tsx` (nested Windows/Marks/Forms ride
-inside the Actions bundle), and deploys to
+inside the Actions bundle), publishes `actions.js` / `workspaces.js` next to
+`package.json` for Tinycast Store / registry installs, and deploys to
 `~/Library/Application Support/com.tinycast.app/extensions/omniwm`.
 
 ## Extend

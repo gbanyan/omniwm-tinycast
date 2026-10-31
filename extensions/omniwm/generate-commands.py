@@ -5,10 +5,9 @@ Primary UX:
   - src/actions.tsx     — catalog + nested Windows/Marks/Forms (bundled together)
   - src/workspaces.tsx  — live workspace list
 
-Tinycast loads extensions/omniwm/<command-name>.js by name, so this script
-esbuilds those two entrypoints and copies them (plus a 2-command package.json)
-into the tinycast install dir. Just-run per-action commands are no longer
-registered or generated.
+Writes prebuilt `actions.js` / `workspaces.js` next to package.json so the
+GitHub registry ships without a toolchain (Tinycast Store requirement), then
+also deploys into the local tinycast install dir.
 
 Run:  python3 generate-commands.py
 """
@@ -28,6 +27,36 @@ ENTRYPOINTS = [
     os.path.join(SRC, "actions.tsx"),
     os.path.join(SRC, "workspaces.tsx"),
 ]
+BUNDLES = ("actions.js", "workspaces.js")
+
+PACKAGE = {
+    "$schema": "https://www.raycast.com/schemas/extension.json",
+    "name": "omniwm",
+    "title": "OmniWM",
+    "description": "Control OmniWM (windows, workspaces, monitors) from Raycast or Tinycast.",
+    "icon": "icon.svg",
+    "author": "gbanyan",
+    "license": "MIT",
+    "platforms": ["macOS"],
+    "categories": ["Productivity", "System Tools"],
+    "commands": [
+        {
+            "name": "actions",
+            "title": "Actions",
+            "description": "Browse and run OmniWM actions (Enter runs; nested Windows/Marks/Forms)",
+            "mode": "view",
+            "keywords": ["omniwm", "actions", "window", "focus", "move"],
+        },
+        {
+            "name": "workspaces",
+            "title": "Workspaces",
+            "description": "Switch workspace or move the focused window (Enter / ⌘K)",
+            "mode": "view",
+            "keywords": ["omniwm", "workspace", "workspaces"],
+        },
+    ],
+    "dependencies": {"@raycast/api": "^1.83.0"},
+}
 
 
 def esbuild(*src_paths):
@@ -64,49 +93,37 @@ def purge_just_run_sources():
 
 
 def write_package():
-    pkg = {
-        "$schema": "https://www.raycast.com/schemas/extension.json",
-        "author": "gbanyan",
-        "categories": ["Productivity", "System Tools"],
-        "commands": [
-            {
-                "name": "actions",
-                "title": "Actions",
-                "description": "Browse and run OmniWM actions (Enter runs; nested Windows/Marks/Forms)",
-                "mode": "view",
-            },
-            {
-                "name": "workspaces",
-                "title": "Workspaces",
-                "description": "Switch workspace or move the focused window (Enter / ⌘K)",
-                "mode": "view",
-            },
-        ],
-        "dependencies": {"@raycast/api": "^1.83.0"},
-        "description": "Control OmniWM (windows, workspaces, monitors) from Raycast or Tinycast.",
-        "license": "MIT",
-        "name": "omniwm",
-    }
     path = os.path.join(REPO, "package.json")
     with open(path, "w") as f:
-        json.dump(pkg, f, indent=2, ensure_ascii=False)
+        json.dump(PACKAGE, f, indent=2, ensure_ascii=False)
         f.write("\n")
     return path
 
 
+def publish_prebuilt():
+    """Copy bundles next to package.json for Store / GitHub registry installs."""
+    for name in BUNDLES:
+        src = os.path.join(DIST, name)
+        if not os.path.exists(src):
+            raise SystemExit(f"missing build output: {src}")
+        shutil.copy2(src, os.path.join(REPO, name))
+
+
 def deploy():
     os.makedirs(INSTALL, exist_ok=True)
-    # Clear previous just-run / stale bundles so tinycast cannot pick them up.
     for name in os.listdir(INSTALL):
         path = os.path.join(INSTALL, name)
         if os.path.isfile(path):
             os.remove(path)
-    for name in ("actions.js", "workspaces.js"):
-        src = os.path.join(DIST, name)
-        if not os.path.exists(src):
-            raise SystemExit(f"missing build output: {src}")
-        shutil.copy2(src, os.path.join(INSTALL, name))
+    for name in BUNDLES:
+        shutil.copy2(os.path.join(REPO, name), os.path.join(INSTALL, name))
     shutil.copy2(os.path.join(REPO, "package.json"), os.path.join(INSTALL, "package.json"))
+    assets = os.path.join(REPO, "assets")
+    if os.path.isdir(assets):
+        dest = os.path.join(INSTALL, "assets")
+        if os.path.isdir(dest):
+            shutil.rmtree(dest)
+        shutil.copytree(assets, dest)
 
 
 def main():
@@ -121,9 +138,10 @@ def main():
     purge_just_run_sources()
     esbuild(*ENTRYPOINTS)
     write_package()
+    publish_prebuilt()
     deploy()
 
-    print("built actions.js + workspaces.js (2 palette commands)")
+    print("built + published actions.js + workspaces.js (prebuilt for Store)")
     print(f"deployed to {INSTALL}")
 
 

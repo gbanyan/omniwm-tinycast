@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="OmniWM">
+  <rect width="128" height="128" rx="28" fill="#0B1220"/>
+  <rect x="18" y="18" width="54" height="92" rx="10" fill="#1F6FEB"/>
+  <rect x="80" y="18" width="30" height="42" rx="8" fill="#58A6FF"/>
+  <rect x="80" y="68" width="30" height="42" rx="8" fill="#79C0FF"/>
+</svg>
