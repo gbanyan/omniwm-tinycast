@@ -1,6 +1,6 @@
 import { execFile } from "child_process";
 import { promisify } from "util";
-import { preferences, showToast, Toast } from "@raycast/api";
+import { closeMainWindow, preferences, showToast, Toast } from "@raycast/api";
 
 const FALLBACK = "/opt/homebrew/bin/omniwmctl";
 const execFileAsync = promisify(execFile);
@@ -14,11 +14,21 @@ const binPath = (): string => {
   return (typeof pref === "string" && pref.trim()) || FALLBACK;
 };
 
-/** Fire an omniwmctl command (fire-and-forget). Failures surface as a toast so a bad subcommand/arg is visible. */
+/**
+ * Fire an omniwmctl command, then dismiss the palette.
+ * Failures surface as a toast so a bad subcommand/arg is visible (palette stays open).
+ */
 export function run(...args: string[]): void {
   execFile(binPath(), args, (err) => {
-    if (!err) return;
-    showToast({ style: Toast.Style.Failure, title: `omniwmctl ${args.join(" ")}`, message: String(err.message || err) });
+    if (err) {
+      showToast({
+        style: Toast.Style.Failure,
+        title: `omniwmctl ${args.join(" ")}`,
+        message: String(err.message || err),
+      });
+      return;
+    }
+    void closeMainWindow({ clearRootSearch: true });
   });
 }
 
@@ -29,28 +39,43 @@ export interface Workspace {
   counts?: { total?: number; tiled?: number; floating?: number; scratchpad?: number };
 }
 
+export interface OmniWindow {
+  id: string;
+  title: string;
+  appName: string;
+  workspaceNumber?: number;
+  workspaceName?: string;
+  isFocused: boolean;
+  isVisible: boolean;
+  mode?: string;
+}
+
+export interface WindowMark {
+  name: string;
+}
+
+function queryPayload<T>(data: unknown, key: string): T[] {
+  if (data === null || typeof data !== "object" || !("result" in data)) return [];
+  const result = (data as { result?: { payload?: Record<string, unknown> } }).result?.payload;
+  const rows = result?.[key];
+  return Array.isArray(rows) ? (rows as T[]) : [];
+}
+
 /** List workspaces (number, display name, focus, window counts) via `omniwmctl query workspaces`. */
 export async function listWorkspaces(): Promise<Workspace[]> {
   const { stdout } = await execFileAsync(binPath(), ["query", "workspaces", "--format", "json"], {
     maxBuffer: 16 * 1024 * 1024,
   });
-  const data: unknown = JSON.parse(stdout);
-
-  const payload =
-    data !== null && typeof data === "object" && "result" in data
-      ? (data as { result?: { payload?: { workspaces?: unknown[] } } }).result?.payload?.workspaces
-      : undefined;
-  const rows = Array.isArray(payload) ? payload : [];
+  const rows = queryPayload<Record<string, unknown>>(JSON.parse(stdout), "workspaces");
 
   const out: Workspace[] = [];
   for (const row of rows) {
-    if (row === null || typeof row !== "object") continue;
-    const r = row as { number?: unknown; displayName?: unknown; isFocused?: unknown; counts?: unknown };
-    const number = toNumber(r.number);
-    const displayName = typeof r.displayName === "string" ? r.displayName : undefined;
+    const number = toNumber(row.number);
+    const displayName = typeof row.displayName === "string" ? row.displayName : undefined;
     if (number === undefined || displayName === undefined) continue;
 
-    const countsRaw = r.counts !== null && typeof r.counts === "object" ? (r.counts as Record<string, unknown>) : undefined;
+    const countsRaw =
+      row.counts !== null && typeof row.counts === "object" ? (row.counts as Record<string, unknown>) : undefined;
     const counts =
       countsRaw !== undefined && toNumber(countsRaw["total"]) !== undefined
         ? {
@@ -61,7 +86,60 @@ export async function listWorkspaces(): Promise<Workspace[]> {
           }
         : undefined;
 
-    out.push({ number, displayName, isFocused: r.isFocused === true, counts });
+    out.push({ number, displayName, isFocused: row.isFocused === true, counts });
+  }
+  return out;
+}
+
+/** List windows via `omniwmctl query windows --format json`. */
+export async function listWindows(): Promise<OmniWindow[]> {
+  const { stdout } = await execFileAsync(binPath(), ["query", "windows", "--format", "json"], {
+    maxBuffer: 16 * 1024 * 1024,
+  });
+  const rows = queryPayload<Record<string, unknown>>(JSON.parse(stdout), "windows");
+
+  const out: OmniWindow[] = [];
+  for (const row of rows) {
+    const id = typeof row.id === "string" ? row.id : undefined;
+    if (!id) continue;
+    const app = row.app !== null && typeof row.app === "object" ? (row.app as Record<string, unknown>) : undefined;
+    const workspace =
+      row.workspace !== null && typeof row.workspace === "object"
+        ? (row.workspace as Record<string, unknown>)
+        : undefined;
+    out.push({
+      id,
+      title: typeof row.title === "string" ? row.title : "(untitled)",
+      appName: typeof app?.name === "string" ? app.name : "Unknown",
+      workspaceNumber: toNumber(workspace?.number),
+      workspaceName: typeof workspace?.displayName === "string" ? workspace.displayName : undefined,
+      isFocused: row.isFocused === true,
+      isVisible: row.isVisible === true,
+      mode: typeof row.mode === "string" ? row.mode : undefined,
+    });
+  }
+  return out;
+}
+
+/** List window marks via `omniwmctl window mark list --json`. */
+export async function listMarks(): Promise<WindowMark[]> {
+  const { stdout } = await execFileAsync(binPath(), ["window", "mark", "list", "--json"], {
+    maxBuffer: 1 * 1024 * 1024,
+  });
+  const data: unknown = JSON.parse(stdout);
+  const marks = queryPayload<unknown>(data, "marks");
+
+  const out: WindowMark[] = [];
+  for (const row of marks) {
+    if (typeof row === "string") {
+      out.push({ name: row });
+      continue;
+    }
+    if (row !== null && typeof row === "object") {
+      const r = row as Record<string, unknown>;
+      const name = typeof r.name === "string" ? r.name : typeof r.mark === "string" ? r.mark : undefined;
+      if (name) out.push({ name });
+    }
   }
   return out;
 }

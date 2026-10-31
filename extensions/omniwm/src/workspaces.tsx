@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Action, Icon, List } from "@raycast/api";
+import { Action, ActionPanel, Icon, List } from "@raycast/api";
 import { listWorkspaces, run, Workspace } from "./lib/omniwm";
 
 export default function Workspaces() {
@@ -39,10 +39,16 @@ export default function Workspaces() {
           title={`${w.number} · ${w.displayName}${w.isFocused ? "  ✓ focused" : ""}`}
           subtitle={`${w.counts?.total ?? 0} window(s)`}
           actions={
-            <>
-              <Action title="Switch to This Workspace" onAction={() => run("command", "switch-workspace", String(w.number))} />
-              <Action title="Move Focused Window Here" onAction={() => run("command", "move-to-workspace", String(w.number))} />
-            </>
+            <ActionPanel>
+              <Action
+                title="Switch to This Workspace"
+                onAction={() => run("command", "switch-workspace", String(w.number))}
+              />
+              <Action
+                title="Move Focused Window Here"
+                onAction={() => run("command", "move-to-workspace", String(w.number))}
+              />
+            </ActionPanel>
           }
         />
       ))}

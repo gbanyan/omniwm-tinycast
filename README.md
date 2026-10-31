@@ -7,11 +7,9 @@ This repository is a **Raycast-extension registry**: one directory per extension
 like [`raycast/extensions`](https://github.com/raycast/extensions). tinycast reads a GitHub
 registry at the `extensions/` path, so the extension lives at `extensions/omniwm/`.
 
-- **`extensions/omniwm/`** — the OmniWM extension. Every `omniwmctl` action is its own
-  palette command (type to filter, select + Enter runs it), plus **OmniWM Workspaces** (live
-  workspace list) and **OmniWM Actions** (grouped browse menu). tinycast runs the per-action
-  commands on Enter; it does not fire a `List` item's `onAction`, so the browse lists are
-  read-only there. See `extensions/omniwm/README.md`.
+- **`extensions/omniwm/`** — two palette commands: **Actions** (catalog + nested Windows /
+  Marks / Forms) and **Workspaces** (live list). Requires tinycast ≥ 0.11.3. See
+  `extensions/omniwm/README.md`.
 
 ## Install into tinycast
 
@@ -19,8 +17,8 @@ registry at the `extensions/` path, so the extension lives at `extensions/omniwm
    `https://github.com/gbanyan/omniwm-tinycast`.
 2. Install the **OmniWM** extension — tinycast builds it from source with Node (needs
    `npm`/`pnpm`/etc. installed).
-3. If your `omniwmctl` binary is not at `/opt/homebrew/bin/omniwmctl`, set the
-   **omniwmctl path** setting to its absolute path.
+3. For local iteration: `cd extensions/omniwm && python3 generate-commands.py` deploys
+   bundles into tinycast’s install dir.
 
 > The source is also mirrored on a private Gitea (`gbanyan/omniwm-tinycast`); this public
 > GitHub repo is the tinycast registry mirror.
